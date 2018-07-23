@@ -1,0 +1,46 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "hosting": {
+    "headers": [ {
+      "source" : "**/*.@(jpg|jpeg|gif|png|svg|js|json)",
+      "headers" : [ {
+      "key" : "Cache-Control",
+      "value" : "max-age=31536000"
+      } ]
+    } ],
+    "public": "hosting/dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source" : "/WebGL/**",
+        "destination" : "/WebGL/**"
+      },
+      {
+        "source": "/verifyUser",
+        "function": "verifyUser"
+      },
+      {
+        "source": "/incoming",
+        "function": "incoming"
+      },
+      {
+        "source": "/submitContactForm",
+        "function": "submitContactForm"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "**/**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
