@@ -74,3 +74,9 @@ export const submitContactForm = (name, company, email, message) => ({
 	email, 
 	message
 })
+
+export const addMemoryDumpBatch = (deviceID, MOParray) => ({
+	type: 'ADD_MEMORY_DUMP_BATCH',
+	deviceID,
+	MOParray
+})

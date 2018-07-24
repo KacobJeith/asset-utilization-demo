@@ -32,6 +32,10 @@ const startState = {
   scrollPosition: 0,
   loginStatus: false,
   providers: {},
+  analytics: {
+    analyticsDeviceList: [],
+    displayingAnalytics: null
+  },
   devices: {},
   places: {},
   groups: {},

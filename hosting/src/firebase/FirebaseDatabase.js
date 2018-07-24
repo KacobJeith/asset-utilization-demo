@@ -2,7 +2,8 @@ import firebase from 'firebase'
 import * as firebaseAuth from './FirebaseAuth'
 import * as setup from '../index'
 import * as actions from '../redux/actions'
-// import * as HAPI from '../serverside/heep/HAPIMemoryParser.js'
+import * as HAPI from './HAPIMemoryParser.js'
+import * as utils from '../utilities/byteUtilities'
 
 export const readUserData = (user) => {
 
@@ -198,13 +199,9 @@ export const retrieveAnalyticData = (user) => {
 
 	firebase.firestore().collection("DeviceList").get().then((querySnapshot) => {
 	    querySnapshot.forEach((doc) => {
-	        console.log(`${doc.id} => ${doc.data().Name}`);
+	        // console.log(`${doc.id} => ${doc.data().Name}`);
 
-	        firebase.firestore().collection("DeviceList").doc(doc.id).collection('Analytics').get().then((analyticsSnapshot) => {
-	        	analyticsSnapshot.forEach((doc) => {
-	        		console.log(`${doc.id} => ${doc.data().Data}`);
-	        	});
-	        })
+	        readDeviceData(doc.id);
 	    });
 	});
 }
@@ -213,57 +210,31 @@ const readDeviceData = (deviceID) => {
 
 	console.log("Reading: ", deviceID);
 
-	firebase.database().ref('/analytics/' + deviceID).on('value', function(snapshot) {
+	firebase.firestore().collection("DeviceList").doc(deviceID).collection('Analytics').get().then((analyticsSnapshot) => {
+    	analyticsSnapshot.forEach((doc) => {
+    		// console.log(`${doc.id} => ${doc.data().Data}`);
+    		var dataAsBuffer = utils.base64ToArrayBuffer(doc.data().Data);
+    		
+    		console.log(`Raw buffer: ${dataAsBuffer}`)
+    		var data = HAPI.ReadHeepResponse(dataAsBuffer);
+    		
+    		var analytics = [];
 
-		var buffer = base64ToArrayBuffer(snapshot.val());
-		var data = [];//HAPI.ReadHeepResponse(buffer);
-		
-		var analytics = [];
+    		for (var i = 0; i < data.length; i++) {
+    			var MOP = data[i];
 
-		for (var i = 0; i < data.length; i++) {
-			var MOP = data[i];
+    			if (MOP.op == 31) { 
 
-			if (MOP.op == 31) { 
+    				analytics.push(MOP.analytics);
+    			}
+    		}
 
-				analytics.push(MOP.analytics);
-			}
-		}
+    		setup.store.dispatch(actions.addMemoryDumpBatch(deviceID, analytics))
+    	});
+    })
 
-		if (analytics.length > 0) {
-			setup.store.dispatch(actions.addMemoryDumpBatch(deviceID, analytics))
-		}
-		;
-
-	})
 }
 
-const base64ToArrayBuffer = (base64) => {
-    var binary_string =  window.atob(base64);
-    var len = binary_string.length;
-    var bytes = new Uint8Array( len );
-    for (var i = 0; i < len; i++)        {
-        bytes[i] = binary_string.charCodeAt(i);
-    }
 
-    return bytes;
-}
-
-export const pushCartToFulfillmentQueue = (checkoutID, variantIDsWithPlaceIDs) => {
-	
-	var user = firebaseAuth.currentUser();
-
-	if (user) {
-		const checkoutPackage = {
-			checkoutID: checkoutID, 
-			userID: user.uid,
-			devices: variantIDsWithPlaceIDs
-		}
-		
-		firebase.database().ref('store/queue').push(checkoutPackage);
-	} else {
-		console.log("User must log in to push contextual data to queue");
-	}
-	
-}
 
 
