@@ -3,8 +3,9 @@ import Immutable from 'immutable'
 import 'babel-polyfill'
 import { initialState } from '../index'
 import * as actions from './actions'
-import * as shopify from '../shopify/Shopify'
 import * as async from './async'
+
+import reducersAnalytics from './reducers_analytics'
 
 export default function(state = initialState, action) {
   switch (action.type) {
@@ -13,127 +14,6 @@ export default function(state = initialState, action) {
       import(/* webpackChunkName: "firebaseAuth" */ '../firebase/FirebaseAuth').then((auth) => auth.handleLogin());
 
       return state
-    case 'POPULATE_SHOPIFY' :
-
-        var newState = Immutable.Map(state.shopify).toJS();
-
-        for (var i = 0; i < action.products.length; i++){
-          newState[action.products[i].variants[0].id] = action.products[i];
-        }
-
-      return Immutable.Map(state).set('shopify', newState).toJS()
-
-    case 'POPULATE_COLLECTIONS' :
-
-        let titleCollections = Immutable.Map(state.collections).toJS();
-
-        for (let i = 0; i < action.collections.length; i++){
-          titleCollections[action.collections[i].title] = action.collections[i];
-        }
-
-      return Immutable.Map(state).set('collections', titleCollections).toJS()
-
-    case 'CREATE_CHECKOUT' :
-
-      import(/* webpackChunkName: "firebaseDatabase" */ '../firebase/FirebaseDatabase').then((database) => database.saveCheckoutID(action.checkoutID));
-
-      return Immutable.Map(state).set('checkoutID', action.checkoutID).toJS()
-
-    case 'SET_CHECKOUT' :
-
-      shopify.retrieveCheckout(action.checkoutID);
-
-      return Immutable.Map(state).set('checkoutID', action.checkoutID).toJS()
-
-    case 'ADD_PRODUCT_TO_CART' :
-
-      shopify.AddProductToCart(state.checkoutID, state.shopify[action.productID]);
-
-      return Immutable.Map(state).set('itemsInCart', state.itemsInCart += 1).toJS();
-
-    case 'UPDATE_QUANTITY_IN_CART' :
-
-      if (parseInt(action.newQuantity) > 0) {
-          shopify.UpdateQuantityInCart(state.checkoutID, action.lineItemID,  parseInt(action.newQuantity));
-      } else {
-
-          var newState = JSON.parse(JSON.stringify(state.shoppingCart))//Object.assign(state.shoppingCart);
-
-        for (var i in state.shoppingCart.lineItems) {
-
-          if ( state.shoppingCart.lineItems[i].id == action.lineItemID) {
-            newState.lineItems[i].quantity = 0;
-            return Immutable.Map(state).set('shoppingCart', newState).toJS()
-          }
-        }
-      }
-
-      return state
-
-    case 'REMOVE_PRODUCT_FROM_CART' :
-
-      shopify.RemoveProductFromCart(state.checkoutID, action.variantID)
-
-      return state
-
-    case 'SAVE_CART_LOCALLY' :
-
-        var trueLineItemIDs = [];
-        for (var i = 0; i < action.cart.lineItems.length; i++) {
-          trueLineItemIDs.push(action.cart.lineItems[i].variant.id);
-        }
-
-        var knownLineItemIDs = Object.keys(state.cartContext);
-
-        var newCartContext = Immutable.Map(state.cartContext).toJS();
-
-        for (var lineItemID in trueLineItemIDs) {
-          var value = trueLineItemIDs[lineItemID];
-
-          if (!(value in newCartContext)) {
-
-            if (Object.keys(state.places).length > 0) {
-
-              newCartContext[value] = Object.keys(state.places)[0];
-
-            } else {
-              newCartContext[value] = 'none';
-            }
-          }
-        }
-
-      return Immutable.Map(state).set('shoppingCart', action.cart).set('cartContext', newCartContext).toJS()
-
-    case 'UPDATE_CART_CONTEXT' :
-
-      var newCartContext = Immutable.Map(state.cartContext).toJS();
-
-      newCartContext[action.variantID] = action.placeID;
-
-
-      return Immutable.Map(state).set('cartContext', newCartContext).toJS()
-
-    case 'COMPLETE_CHECKOUT' :
-
-      for (var i in state.shoppingCart.lineItems) {
-        if (state.shoppingCart.lineItems[i].quantity == 0) {
-          shopify.RemoveProductFromCart(state.checkoutID, state.shoppingCart.lineItems[i].id)
-        }
-      }
-
-      const checkoutID = state.shoppingCart.id;
-
-      import(/* webpackChunkName: "firebaseDatabase" */ '../firebase/FirebaseDatabase').then((database) => database.pushCartToFulfillmentQueue(checkoutID, state.cartContext));
-
-      return state
-
-    case 'SCROLL':
-
-      return Immutable.Map(state).set('scrollPosition', action.positionY).toJS()
-
-    case 'UPDATE_WEBGL_STATUS':
-
-      return Immutable.Map(state).set('webGLStatus', action.status).toJS()
 
     case 'LOGOUT':
 
@@ -209,17 +89,22 @@ export default function(state = initialState, action) {
 
       return Immutable.Map(state).set('places', newState).toJS()
 
-    case 'SET_SVG_TEXT':
-      return Immutable.Map(state).set('svgText', action.svgText).toJS();
-
     case 'SUBMIT_CONTACT_FORM':
 
       async.submitContactForm(action.name, action.company, action.email, action.message);
 
       return state;
 
-
     default:
-      return state
+      
   }
+
+  const analyticsStartingState = Immutable.Map(state.analytics).toJS();
+  const analyticsState = reducersAnalytics(analyticsStartingState, action, state);
+
+  if (analyticsState !== analyticsStartingState) {
+    return  Immutable.Map(state).set('analytics', analyticsState).toJS()
+  }
+
+  return state
 }

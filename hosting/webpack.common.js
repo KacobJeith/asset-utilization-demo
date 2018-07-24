@@ -67,6 +67,10 @@ module.exports = {
     }
   },
 
+  externals: {
+    firebase: 'firebase'
+  },
+
   module: {
     rules: [
       {

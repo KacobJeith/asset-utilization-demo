@@ -195,13 +195,17 @@ export const associateDeviceWithAccount = (deviceData) => {
 }
 
 export const retrieveAnalyticData = (user) => {
-	console.log("Reading Analytics Data");
 
-	firebase.database().ref('/users/' + user.uid + '/devices').on('value', (snapshot) => {
+	firebase.firestore().collection("DeviceList").get().then((querySnapshot) => {
+	    querySnapshot.forEach((doc) => {
+	        console.log(`${doc.id} => ${doc.data().Name}`);
 
-		snapshot.forEach((childSnapshot) => {
-	      readDeviceData(childSnapshot.key);
-  		});
+	        firebase.firestore().collection("DeviceList").doc(doc.id).collection('Analytics').get().then((analyticsSnapshot) => {
+	        	analyticsSnapshot.forEach((doc) => {
+	        		console.log(`${doc.id} => ${doc.data().Data}`);
+	        	});
+	        })
+	    });
 	});
 }
 

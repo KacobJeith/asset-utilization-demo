@@ -70,6 +70,10 @@ export const initializeFirebase = () => {
 
 	firebase.initializeApp(config);
 
+	const firestore = firebase.firestore();
+	const settings = {timestampsInSnapshots: true};
+	firestore.settings(settings);
+
 	firebase.auth().onAuthStateChanged(function(user) {
 	  if (user) {
 	    // User is signed in.
@@ -96,6 +100,7 @@ export const initializeFirebase = () => {
 	    // No user is signed in.
 	    console.log("Detected no user signed in");
 	    setup.store.dispatch(actions.updateLoginStatus(false));
+	    database.retrieveAnalyticData(user);
 
 	    checkIfInbound();
 
