@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
-import * as Actions from '../../redux/actions'
+import * as Actions from 'reducers/actions'
 import { Grid, Typography, IconButton, Badge, Button, Paper }   from 'material-ui';
 import  AddShoppingCart  from 'material-ui-icons/AddShoppingCart';
 import { withStyles, withTheme } from 'material-ui/styles';

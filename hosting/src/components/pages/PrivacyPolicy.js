@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { withTheme } from 'material-ui/styles';
-import * as Actions from '../../redux/actions'
+import * as Actions from 'reducers/actions'
 import SectionCard from '../utilities/SectionCard'
 
 import { Grid, Paper, Typography } from 'material-ui'

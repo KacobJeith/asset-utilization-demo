@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect }            from 'react-redux'
 import { withRouter }         from 'react-router-dom'
 
-import * as Actions         from '../../redux/actions'
+import * as Actions         from 'reducers/actions'
 
 import { TimelineMax } from 'gsap';
 import { withStyles } from 'material-ui/styles';

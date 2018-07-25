@@ -58,6 +58,7 @@ module.exports = {
     modules: ['node_modules'],
     extensions: ['.js', '.jsx'],
     alias: {
+      reducers: path.resolve(__dirname, 'src/reducers/'),
       assets: path.resolve(__dirname, 'src/creativetim/assets/'),
       components: path.resolve(__dirname, 'src/creativetim/components/'),
       layouts: path.resolve(__dirname, 'src/creativetim/layouts/'),

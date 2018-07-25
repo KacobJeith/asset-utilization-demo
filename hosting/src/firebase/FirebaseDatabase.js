@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 import * as firebaseAuth from './FirebaseAuth'
 import * as setup from '../index'
-import * as actions from '../redux/actions'
+import * as actions from 'reducers/actions'
 import * as HAPI from './HAPIMemoryParser.js'
 import * as utils from '../utilities/byteUtilities'
 
@@ -215,7 +215,6 @@ const readDeviceData = (deviceID) => {
     		// console.log(`${doc.id} => ${doc.data().Data}`);
     		var dataAsBuffer = utils.base64ToArrayBuffer(doc.data().Data);
     		
-    		console.log(`Raw buffer: ${dataAsBuffer}`)
     		var data = HAPI.ReadHeepResponse(dataAsBuffer);
     		
     		var analytics = [];

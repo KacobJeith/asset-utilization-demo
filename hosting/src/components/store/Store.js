@@ -5,7 +5,7 @@ import { withRouter }         from 'react-router-dom'
 
 import { Grid }   from 'material-ui';
 
-import * as Actions         from '../../redux/actions'
+import * as Actions         from 'reducers/actions'
 import ProductCard          from './ProductCard'
 
 var mapStateToProps = (state) => ({

@@ -32,6 +32,7 @@
     "ajv": "6.5.1",
     "body-parser": "^1.15.2",
     "chartist": "0.10.1",
+    "chartist-plugin-tooltips": "0.0.17",
     "classnames": "2.2.6",
     "email-validator": "^2.0.3",
     "firebase": "^5.3.0",

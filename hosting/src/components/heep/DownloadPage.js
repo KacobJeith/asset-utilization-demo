@@ -15,7 +15,7 @@ import Hidden                                       from 'material-ui/Hidden';
 import FileDownload  from 'material-ui-icons/FileDownload';
 import ArrowForward  from 'material-ui-icons/ArrowForward';
 
-import * as actions from '../../redux/actions'
+import * as actions from 'reducers/actions'
 
 
 var mapStateToProps = (state, ownProps) => ({

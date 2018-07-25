@@ -2,7 +2,7 @@ import React from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as Actions from '../redux/actions'
+import * as Actions from 'reducers/actions'
 import AsyncComponent from './AsyncComponent'
 
 import AppBar from './AppBar'

@@ -1,6 +1,6 @@
 import firebase from 'firebase'
 import * as setup from '../index'
-import * as actions from '../redux/actions'
+import * as actions from 'reducers/actions'
 import * as database from './FirebaseDatabase'
 
 export const logout = () => {

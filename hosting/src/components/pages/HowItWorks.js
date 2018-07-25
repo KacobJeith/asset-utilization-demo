@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { withStyles } from 'material-ui/styles';
-import * as Actions from '../../redux/actions'
+import * as Actions from 'reducers/actions'
 import { logPageView } from '../../GoogleAnalytics'
 import { HashLink } from "react-router-hash-link";
 

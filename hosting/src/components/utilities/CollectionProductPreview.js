@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect }            from 'react-redux'
 import { withRouter, Link }         from 'react-router-dom'
 
-import * as Actions         from '../../redux/actions'
+import * as Actions         from 'reducers/actions'
 import { Typography, Grid, Paper } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 

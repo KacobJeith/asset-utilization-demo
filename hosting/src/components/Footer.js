@@ -11,7 +11,7 @@ import {  Grid,
 
 import { withStyles, withTheme } from 'material-ui/styles';
 
-import * as actions from '../redux/actions'
+import * as actions from 'reducers/actions'
 
 
 var mapStateToProps = (state, ownProps) => ({

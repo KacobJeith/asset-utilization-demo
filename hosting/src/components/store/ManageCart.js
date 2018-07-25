@@ -5,7 +5,7 @@ import { withRouter, Link }         from 'react-router-dom'
 
 import { Grid, Typography, Paper, Divider, Hidden }   from 'material-ui';
 
-import * as Actions         from '../../redux/actions'
+import * as Actions         from 'reducers/actions'
 import CartItemCard          from './CartItemCard'
 import { withTheme } from 'material-ui/styles';
 import { buttonLink, buttonLinkWithAction } from '../utilities/ButtonUtils'

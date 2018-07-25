@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
-import * as Actions from '../../redux/actions'
+import * as Actions from 'reducers/actions'
 import {  Grid,
           Typography,
           MenuItem,

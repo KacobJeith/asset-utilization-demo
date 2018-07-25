@@ -5,9 +5,37 @@ import Grid from "@material-ui/core/Grid";
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
 import Table from "components/Table/Table.jsx";
+
+import Chartist from 'chartist';
+import ChartistGraph from "react-chartist";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
+import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
+import CardFooter from "components/Card/CardFooter.jsx";
+import Button from '@material-ui/core/Button';
+
+import AccessTime from "@material-ui/icons/AccessTime";
+import ArrowUpward from "@material-ui/icons/ArrowUpward";
+
+import {
+  dailySalesChart,
+  emailsSubscriptionChart,
+  completedTasksChart
+} from "variables/charts";
+
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { withRouter } from 'react-router-dom'
+import * as Actions from 'reducers/actions'
+import dateFormat from 'dateformat'
+
+const mapStateToProps = (state, ownProps) => ({
+  dailyActivity: getDailyActivity(state, ownProps),
+  activeDevice: state.analytics.displayingAnalytics,
+  analyticsDevices: state.analytics.analyticsDeviceList
+  // deviceDetails: state.devices
+})
 
 const styles = {
   cardCategoryWhite: {
@@ -41,66 +69,27 @@ const styles = {
 
 function TableList(props) {
   const { classes } = props;
+
+  const tableData = props.analyticsDevices.map(deviceID => {
+    return ['name', deviceID, '10', '11am', <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
+  })
+
   return (
     <Grid container>
+      {displayChart(props.dailyActivity, classes, props)}
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Engagement Details</h4>
+            <h4 className={classes.cardTitleWhite}>All Devices</h4>
             <p className={classes.cardCategoryWhite}>
-              Per Piece per Exhibit
+              All Devices Reporting Analytics
             </p>
           </CardHeader>
           <CardBody>
             <Table
               tableHeaderColor="primary"
-              tableHead={["Name", "Exhibit", "Average Duration", "Interactions"]}
-              tableData={[
-                ["How Does my Skeleton Move?", "BodyWorks", "1:46", "7,838"],
-                ["What Do I Look Like Inside?", "Bodyworks", "0:07", "5,789"],
-                ["Air Hockey", "roboworld", "0:23", "1,042"],
-                ["HAL 9000", "roboworld", "6:32", "35"],
-                ["Robot Hall of Fame", "roboworld", "3:01", "542"],
-                ["Living & Working in Space Wall", "SpacePlace", "4:21", "1,615"]
-              ]}
-            />
-          </CardBody>
-        </Card>
-      </GridItem>
-      <GridItem xs={12} sm={12} md={12}>
-        <Card plain>
-          <CardHeader plain color="primary">
-            <h4 className={classes.cardTitleWhite}>
-              Table on Plain Background
-            </h4>
-            <p className={classes.cardCategoryWhite}>
-              Here is a subtitle for this table
-            </p>
-          </CardHeader>
-          <CardBody>
-            <Table
-              tableHeaderColor="primary"
-              tableHead={["ID", "Name", "Country", "City", "Salary"]}
-              tableData={[
-                ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
-                ["2", "Minerva Hooper", "$23,789", "Curaçao", "Sinaai-Waas"],
-                ["3", "Sage Rodriguez", "$56,142", "Netherlands", "Baileux"],
-                [
-                  "4",
-                  "Philip Chaney",
-                  "$38,735",
-                  "Korea, South",
-                  "Overland Park"
-                ],
-                [
-                  "5",
-                  "Doris Greene",
-                  "$63,542",
-                  "Malawi",
-                  "Feldkirchen in Kärnten"
-                ],
-                ["6", "Mason Porter", "$78,615", "Chile", "Gloucester"]
-              ]}
+              tableHead={["Name", "DeviceID", "Data Points", "Most Active Hour", "View"]}
+              tableData={tableData}
             />
           </CardBody>
         </Card>
@@ -109,4 +98,122 @@ function TableList(props) {
   );
 }
 
-export default withStyles(styles)(TableList);
+const displayChart = (dailyActivity, classes, props) => (
+  <Card chart>
+    <CardHeader color="success">
+      <ChartistGraph
+        className="ct-chart"
+        data={dailyActivitySchema(dailyActivity).data}
+        type="Line"
+        options={dailyActivitySchema().options}
+        listener={dailyActivitySchema().animation}
+      />
+    </CardHeader>
+    <CardBody>
+      <h4 className={classes.cardTitle}>{props.activeDevice}</h4>
+    </CardBody>
+    <CardFooter chart>
+      <div className={classes.stats}>
+        <AccessTime /> updated 4 minutes ago
+      </div>
+    </CardFooter>
+  </Card>
+)
+
+
+var mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(Actions, dispatch)
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(TableList)))
+
+
+const getAnalyticsSeries = (state, ownProps, key) => {
+
+  if ("analytics" in state) {
+    if (state.analytics.displayingAnalytics in state.analytics) {
+      return Array.from(Object.keys(state.analytics[state.analytics.displayingAnalytics]), x => state.analytics[state.analytics.displayingAnalytics][x][key]);
+    }
+  }
+
+  return []
+}
+
+const getDailyActivity = (state, ownProps) => {
+
+  var allTimes = getAnalyticsSeries(state, ownProps, 'timeStamp');
+
+  var hourCounters = new Array(24).fill(0);
+
+  for (var i in allTimes) {
+    var keydate = new Date(allTimes[i])
+    var key = keydate.getUTCHours() ;
+    hourCounters[key] += 1;
+
+  }
+
+  var maxCounter = Math.max(...hourCounters);
+
+  for (var i = 0; i < hourCounters.length; i++) {
+    hourCounters[i] /= (maxCounter / 100);
+  }  
+
+  return hourCounters
+}
+
+
+// ##############################
+// // // Completed Tasks
+// #############################
+
+var delays = 80,
+  durations = 500;
+
+const dailyActivitySchema = (dailyActivity = []) => ({
+  data: {
+    labels: ["", "", "2am", "", "", "5am", "", "", "8am", "", "", "11am", "", "", "2pm", "", "", "5pm", "", "", "8pm", "", "", "11pm"],
+    series: [dailyActivity]
+  },
+  options: {
+    lineSmooth: Chartist.Interpolation.cardinal({
+      tension: 0
+    }),
+    low: 0,
+    high: 105, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+    chartPadding: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0
+    }
+  },
+  animation: {
+    draw: function(data) {
+      if (data.type === "line" || data.type === "area") {
+        data.element.animate({
+          d: {
+            begin: 600,
+            dur: 700,
+            from: data.path
+              .clone()
+              .scale(1, 0)
+              .translate(0, data.chartRect.height())
+              .stringify(),
+            to: data.path.clone().stringify(),
+            easing: Chartist.Svg.Easing.easeOutQuint
+          }
+        });
+      } else if (data.type === "point") {
+        data.element.animate({
+          opacity: {
+            begin: (data.index + 1) * delays,
+            dur: durations,
+            from: 0,
+            to: 1,
+            easing: "ease"
+          }
+        });
+      }
+    }
+  }
+});

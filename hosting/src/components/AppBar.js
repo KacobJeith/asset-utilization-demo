@@ -7,7 +7,7 @@ import PropTypes              from 'prop-types';
 import classNames             from 'classnames';
 import { logos }              from '../assets/remote/Logos'
 
-import * as actions           from '../redux/actions'
+import * as actions           from 'reducers/actions'
 
 import {  AppBar,
           Avatar,

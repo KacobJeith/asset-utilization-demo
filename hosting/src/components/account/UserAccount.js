@@ -2,7 +2,7 @@ import React                  from 'react';
 import { connect }            from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { withRouter }         from 'react-router-dom'
-import * as actions           from '../../redux/actions'
+import * as actions           from 'reducers/actions'
 
 import { withTheme }       from 'material-ui/styles'
 import { Grid, Tooltip, Typography, Avatar, Divider, IconButton, List, ListItem, ListItemText, ListItemIcon}  from 'material-ui'
