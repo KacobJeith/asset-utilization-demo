@@ -33,12 +33,15 @@ import * as Actions from 'reducers/actions'
 import dateFormat from 'dateformat'
 
 const mapStateToProps = (state, ownProps) => ({
-  dailyActivity: getDailyActivity(state, ownProps),
+  // dailyActivity: getDailyActivity(state, ownProps),
   activeDevice: state.analytics.displayingAnalytics,
   analyticsDevices: state.analytics.analyticsDeviceList,
-  rawData: state.analytics[state.analytics.displayingAnalytics] ? state.analytics[state.analytics.displayingAnalytics] : [],
+  rawData: state.analytics[state.analytics.displayingAnalytics] ? state.analytics[state.analytics.displayingAnalytics].raw : [],
+  allAnalytics: state.analytics, 
+  dailyActivity: state.analytics[state.analytics.displayingAnalytics] ? state.analytics[state.analytics.displayingAnalytics].summary.hourBins : [],
   deviceDetails: state.devices
 })
+
 
 const styles = {
   cardCategoryWhite: {
@@ -84,7 +87,8 @@ function TableList(props) {
 const devicesTable = (classes, props) => {
 
   const tableData = props.analyticsDevices.map(deviceID => {
-    return [props.deviceDetails[deviceID].Name, '10', '11am', 'Thursday, July 23', <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
+    var summary = props.allAnalytics[deviceID].summary;
+    return [props.deviceDetails[deviceID].Name, summary.count, convertHourToString(summary.mostActiveHour), dateFormat(summary.latest, "ddd, mmm dS, yyyy"), <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
   })
   
   return (<GridItem xs={12} sm={12} md={12}>
@@ -114,7 +118,7 @@ const displayChart = (classes, props) => (
         className="ct-chart"
         data={dailyActivitySchema(props.dailyActivity).data}
         type="Line"
-        options={dailyActivitySchema().options}
+        options={dailyActivitySchema(props.dailyActivity).options}
         listener={dailyActivitySchema().animation}
       />
     </CardHeader>
@@ -147,40 +151,6 @@ var mapDispatchToProps = (dispatch) => {
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(TableList)))
 
 
-const getAnalyticsSeries = (state, ownProps, key) => {
-
-  if ("analytics" in state) {
-    if (state.analytics.displayingAnalytics in state.analytics) {
-      return Array.from(Object.keys(state.analytics[state.analytics.displayingAnalytics]), x => state.analytics[state.analytics.displayingAnalytics][x][key]);
-    }
-  }
-
-  return []
-}
-
-const getDailyActivity = (state, ownProps) => {
-
-  var allTimes = getAnalyticsSeries(state, ownProps, 'timeStamp');
-
-  var hourCounters = new Array(24).fill(0);
-
-  for (var i in allTimes) {
-    var keydate = new Date(allTimes[i])
-    var key = keydate.getUTCHours() ;
-    hourCounters[key] += 1;
-
-  }
-
-  var maxCounter = Math.max(...hourCounters);
-
-  for (var i = 0; i < hourCounters.length; i++) {
-    hourCounters[i] /= (maxCounter / 100);
-  }  
-
-  return hourCounters
-}
-
-
 // ##############################
 // // // Completed Tasks
 // #############################
@@ -198,7 +168,7 @@ const dailyActivitySchema = (dailyActivity = []) => ({
       tension: 0
     }),
     low: 0,
-    high: 105, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+    high: Math.max(...dailyActivity) + 5, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
     chartPadding: {
       top: 0,
       right: 0,
@@ -236,3 +206,8 @@ const dailyActivitySchema = (dailyActivity = []) => ({
     }
   }
 });
+
+const convertHourToString = (hr) => {
+  const hours = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"]
+  return hours[hr]
+}

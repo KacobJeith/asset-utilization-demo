@@ -11,13 +11,13 @@ import * as GoogleAnalytics from './GoogleAnalytics'
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 import { createBrowserHistory } from "history";
-import { Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import "./creativetim/assets/css/material-dashboard-react.css";
 
 import indexRoutes from "routes/index.jsx";
 
-const hist = createBrowserHistory();
+// const hist = createBrowserHistory();
 
  WebFont.load({
    google: {
@@ -49,7 +49,7 @@ export const store = createStore(reducers, startState, composeWithDevTools(apply
 
 render(
   <Provider store={store}>
-    <Router history={hist}>
+    <Router >
       <Switch>
         {indexRoutes.map((prop, key) => {
           return <Route path={prop.path} component={prop.component} key={key} />;
