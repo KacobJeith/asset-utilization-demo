@@ -25,48 +25,48 @@ const dashboardRoutes = [
     icon: Dashboard,
     component: DashboardPage
   },
+  // {
+  //   path: "/user",
+  //   sidebarName: "Donor Profiles",
+  //   navbarName: "Profile",
+  //   icon: Person,
+  //   component: UserProfile
+  // },
   {
-    path: "/user",
-    sidebarName: "Donor Profiles",
-    navbarName: "Profile",
-    icon: Person,
-    component: UserProfile
-  },
-  {
-    path: "/table",
-    sidebarName: "Exhibit Details",
-    navbarName: "Table List",
+    path: "/analytics",
+    sidebarName: "Data Logs",
+    navbarName: "Heep Analytics (lol)",
     icon: ContentPaste,
     component: TableList
   },
-  {
-    path: "/typography",
-    sidebarName: "Weekly Reports",
-    navbarName: "Typography",
-    icon: LibraryBooks,
-    component: Typography
-  },
-  {
-    path: "/icons",
-    sidebarName: "Engagement Heatmaps",
-    navbarName: "Icons",
-    icon: BubbleChart,
-    component: Icons
-  },
-  {
-    path: "/notifications",
-    sidebarName: "Notifications",
-    navbarName: "Notifications",
-    icon: Notifications,
-    component: NotificationsPage
-  },
-  {
-    path: "/upgrade-to-pro",
-    sidebarName: "Contact Heep",
-    navbarName: "Upgrade To PRO",
-    icon: Unarchive,
-    component: UpgradeToPro
-  },
+  // {
+  //   path: "/typography",
+  //   sidebarName: "Weekly Reports",
+  //   navbarName: "Typography",
+  //   icon: LibraryBooks,
+  //   component: Typography
+  // },
+  // {
+  //   path: "/icons",
+  //   sidebarName: "Engagement Heatmaps",
+  //   navbarName: "Icons",
+  //   icon: BubbleChart,
+  //   component: Icons
+  // },
+  // {
+  //   path: "/notifications",
+  //   sidebarName: "Notifications",
+  //   navbarName: "Notifications",
+  //   icon: Notifications,
+  //   component: NotificationsPage
+  // },
+  // {
+  //   path: "/upgrade-to-pro",
+  //   sidebarName: "Contact Heep",
+  //   navbarName: "Upgrade To PRO",
+  //   icon: Unarchive,
+  //   component: UpgradeToPro
+  // },
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];
 

@@ -33,8 +33,8 @@ import dateFormat from 'dateformat'
 const mapStateToProps = (state, ownProps) => ({
   dailyActivity: getDailyActivity(state, ownProps),
   activeDevice: state.analytics.displayingAnalytics,
-  analyticsDevices: state.analytics.analyticsDeviceList
-  // deviceDetails: state.devices
+  analyticsDevices: state.analytics.analyticsDeviceList,
+  deviceDetails: state.devices
 })
 
 const styles = {
@@ -71,7 +71,7 @@ function TableList(props) {
   const { classes } = props;
 
   const tableData = props.analyticsDevices.map(deviceID => {
-    return ['name', deviceID, '10', '11am', <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
+    return [props.deviceDetails[deviceID].Name, deviceID, '10', '11am', 'Thursday, July 23', <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
   })
 
   return (
@@ -88,7 +88,7 @@ function TableList(props) {
           <CardBody>
             <Table
               tableHeaderColor="primary"
-              tableHead={["Name", "DeviceID", "Data Points", "Most Active Hour", "View"]}
+              tableHead={["Name", "DeviceID", "Data Points", "Most Active Hour", "Last Reported",""]}
               tableData={tableData}
             />
           </CardBody>
@@ -110,7 +110,7 @@ const displayChart = (dailyActivity, classes, props) => (
       />
     </CardHeader>
     <CardBody>
-      <h4 className={classes.cardTitle}>{props.activeDevice}</h4>
+      <h4 className={classes.cardTitle}>{props.deviceDetails[props.activeDevice] ? props.deviceDetails[props.activeDevice].Name : ''}</h4>
     </CardBody>
     <CardFooter chart>
       <div className={classes.stats}>

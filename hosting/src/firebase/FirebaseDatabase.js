@@ -201,6 +201,7 @@ export const retrieveAnalyticData = (user) => {
 	    querySnapshot.forEach((doc) => {
 	        // console.log(`${doc.id} => ${doc.data().Name}`);
 
+	        setup.store.dispatch(actions.addDevice(doc.id, doc.data()))
 	        readDeviceData(doc.id);
 	    });
 	});
