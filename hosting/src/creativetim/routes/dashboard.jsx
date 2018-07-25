@@ -34,7 +34,7 @@ const dashboardRoutes = [
   // },
   {
     path: "/analytics",
-    sidebarName: "Data Logs",
+    sidebarName: "Analytics",
     navbarName: "Heep Analytics (lol)",
     icon: ContentPaste,
     component: TableList

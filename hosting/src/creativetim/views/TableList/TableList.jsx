@@ -5,6 +5,7 @@ import Grid from "@material-ui/core/Grid";
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
 import Table from "components/Table/Table.jsx";
+import PaginatedTable from "components/Table/PaginatedTable.jsx";
 
 import Chartist from 'chartist';
 import ChartistGraph from "react-chartist";
@@ -13,6 +14,7 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
+import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 
 import AccessTime from "@material-ui/icons/AccessTime";
@@ -34,6 +36,7 @@ const mapStateToProps = (state, ownProps) => ({
   dailyActivity: getDailyActivity(state, ownProps),
   activeDevice: state.analytics.displayingAnalytics,
   analyticsDevices: state.analytics.analyticsDeviceList,
+  rawData: state.analytics[state.analytics.displayingAnalytics] ? state.analytics[state.analytics.displayingAnalytics] : [],
   deviceDetails: state.devices
 })
 
@@ -70,47 +73,64 @@ const styles = {
 function TableList(props) {
   const { classes } = props;
 
-  const tableData = props.analyticsDevices.map(deviceID => {
-    return [props.deviceDetails[deviceID].Name, deviceID, '10', '11am', 'Thursday, July 23', <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
-  })
-
   return (
     <Grid container>
-      {displayChart(props.dailyActivity, classes, props)}
-      <GridItem xs={12} sm={12} md={12}>
-        <Card>
-          <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>All Devices</h4>
-            <p className={classes.cardCategoryWhite}>
-              All Devices Reporting Analytics
-            </p>
-          </CardHeader>
-          <CardBody>
-            <Table
-              tableHeaderColor="primary"
-              tableHead={["Name", "DeviceID", "Data Points", "Most Active Hour", "Last Reported",""]}
-              tableData={tableData}
-            />
-          </CardBody>
-        </Card>
-      </GridItem>
+      {displayChart(classes, props)}
+      {devicesTable(classes, props)}
     </Grid>
   );
 }
 
-const displayChart = (dailyActivity, classes, props) => (
+const devicesTable = (classes, props) => {
+
+  const tableData = props.analyticsDevices.map(deviceID => {
+    return [props.deviceDetails[deviceID].Name, '10', '11am', 'Thursday, July 23', <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
+  })
+  
+  return (<GridItem xs={12} sm={12} md={12}>
+    <Card>
+      <CardHeader color="primary">
+        <h4 className={classes.cardTitleWhite}>All Devices</h4>
+        <p className={classes.cardCategoryWhite}>
+          All Devices Reporting Analytics
+        </p>
+      </CardHeader>
+      <CardBody>
+        <Table
+          tableHeaderColor="primary"
+          tableHead={["Name", "Data Points", "Most Active Hour", "Last Reported",""]}
+          tableData={tableData}
+        />
+      </CardBody>
+    </Card>
+  </GridItem>)
+
+}
+
+const displayChart = (classes, props) => (
   <Card chart>
     <CardHeader color="success">
       <ChartistGraph
         className="ct-chart"
-        data={dailyActivitySchema(dailyActivity).data}
+        data={dailyActivitySchema(props.dailyActivity).data}
         type="Line"
         options={dailyActivitySchema().options}
         listener={dailyActivitySchema().animation}
       />
     </CardHeader>
+
     <CardBody>
       <h4 className={classes.cardTitle}>{props.deviceDetails[props.activeDevice] ? props.deviceDetails[props.activeDevice].Name : ''}</h4>
+      
+      <CardHeader color="warning" style={{marginTop: 20}}>
+        Raw Data Log
+      </CardHeader>
+      <PaginatedTable
+        tableHead={["Date", "Time", "Control", "Value"]}
+        tableData={props.rawData.map(dataEntry => (
+          [dateFormat(dataEntry.timeStamp, "dddd, mmmm dS, yyyy"), dateFormat(dataEntry.timeStamp, "h:MM:ss tt"), dataEntry.controlID, dataEntry.controlValue]
+        ))}
+      />
     </CardBody>
     <CardFooter chart>
       <div className={classes.stats}>
@@ -119,7 +139,6 @@ const displayChart = (dailyActivity, classes, props) => (
     </CardFooter>
   </Card>
 )
-
 
 var mapDispatchToProps = (dispatch) => {
   return bindActionCreators(Actions, dispatch)

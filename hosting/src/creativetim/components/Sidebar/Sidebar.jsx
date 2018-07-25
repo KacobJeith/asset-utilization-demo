@@ -64,9 +64,18 @@ const Sidebar = ({ ...props }) => {
   );
   var brand = (
     <div className={classes.logo}>
-      <a href="https://www.creative-tim.com" className={classes.logoLink}>
+      <a href="https://heep.io" className={classes.logoLink}>
         <div className={classes.logoImage}>
-          <img src={'https://firebasestorage.googleapis.com/v0/b/heep-3cddb.appspot.com/o/assets%2FLogo%2FsideBySide.svg?alt=media&token=008d4474-2ffd-44ab-951f-0d9fd8a8efd2'} alt="logo" className={classes.img} />
+          <img 
+              src={'https://firebasestorage.googleapis.com/v0/b/heep-3cddb.appspot.com/o/assets%2FLogo%2FsideBySide.svg?alt=media&token=008d4474-2ffd-44ab-951f-0d9fd8a8efd2'} 
+              alt="logo" 
+              className={classes.img} 
+              style={{
+                width: '50%',
+                top: 10,
+                left: 22
+              }}
+          />
         </div>
         {logoText}
       </a>
