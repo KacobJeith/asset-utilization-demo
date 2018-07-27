@@ -83,6 +83,18 @@ export var GetIntFromByteArray = (buffer) => {
   return integer
 }
 
+export var GetIntFromByteArrayLarge = (buffer) => {
+
+  var integer = 0;
+
+  for (var i=0; i < buffer.length; i++) {
+    integer += buffer[i] * Math.pow(2, 8 * (buffer.length - (i+1)));
+  }
+
+  return integer
+
+}
+
 export const ByteArrayToBase64String = (arrayBuffer) => {
   let base64String = new Buffer(arrayBuffer).toString('base64');
   return base64String
