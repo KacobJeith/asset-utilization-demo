@@ -88,7 +88,7 @@ const devicesTable = (classes, props) => {
 
   const tableData = props.analyticsDevices.map(deviceID => {
     var summary = props.allAnalytics[deviceID].summary;
-    return [props.deviceDetails[deviceID].Name, summary.count, convertHourToString(summary.mostActiveHour), dateFormat(summary.latest, "ddd, mmm dS, yyyy"), <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
+    return [props.deviceDetails[deviceID].Name, summary.count, convertHourToString(summary.mostActiveHour), dateFormat(summary.latest, "ddd, mmm dS, h:MM tt"), <Button onClick={() => props.selectDeviceToDisplay(deviceID)}> View </Button>]
   })
   
   return (<GridItem xs={12} sm={12} md={12}>

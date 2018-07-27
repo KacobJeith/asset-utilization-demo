@@ -59,7 +59,7 @@ const calculateHourBins = (allTimes) => {
 
   for (var i in allTimes) {
     var keydate = new Date(allTimes[i])
-    var key = keydate.getUTCHours() ;
+    var key = keydate.getHours() ;
     hourCounters[key] += 1;
   }
 

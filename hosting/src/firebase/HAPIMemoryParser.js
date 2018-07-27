@@ -247,6 +247,10 @@ export var ReadControl = (thisBlockData) => { // OP 2
  var ReadAnalyticsData = (thisBlockData) => {
 
   var date = new Date(Date.UTC(2018, 0, 1, 0, 0, 0));
+
+  var d = new Date();
+  var n = d.getTimezoneOffset();
+
   var controlValNumBytes = thisBlockData[2];
   var controlValBytes = thisBlockData.slice(3, 3 + controlValNumBytes);
   var controlValue = byteUtils.GetIntFromByteArray(controlValBytes);
@@ -259,7 +263,7 @@ export var ReadControl = (thisBlockData) => { // OP 2
   // console.log(timeStampBytes);
 
   var timeInMillis = byteUtils.GetIntFromByteArrayLarge(timeStampBytes);
-  var timestampMillis = date.getTime() + timeInMillis;
+  var timestampMillis = date.getTime() + timeInMillis ;
   var timestamp = new Date(timestampMillis);
 
   // console.log(timestamp)
